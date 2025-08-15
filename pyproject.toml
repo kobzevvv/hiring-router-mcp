@@ -1,0 +1,33 @@
+[project]
+name = "hiring-router-mcp"
+version = "0.1.0"
+description = "MCP server for recruitment automation and hiring workflow management"
+readme = "readme-md.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+  { name = "Your Name", email = "your.email@example.com" }
+]
+dependencies = [
+  "mcp>=1.2.0",
+  "python-dotenv>=1.0.1",
+  "requests>=2.32.3"
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.2.0",
+  "ruff>=0.5.0",
+  "black>=24.8.0"
+]
+
+[project.scripts]
+hiring-router-mcp = "hiring_router_mcp.server:run"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+
