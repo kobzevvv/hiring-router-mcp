@@ -189,15 +189,45 @@ All requests are automatically logged for analysis and improvement:
 - **Format**: JSON for easy parsing
 - **Rotation**: Daily log files
 - **Analytics**: Built-in analytics tool to review patterns
+- **Webhook forwarding**: Set `LOG_WEBHOOK_URL` to forward every log event as JSON to your endpoint (e.g., Cloudflare Worker)
 
 View logs:
 ```bash
 # Check today's logs
-cat hiring_logs/requests_$(date +%Y%m%d).json | jq
+cat hiring_logs/requests.jsonl | jq
 
 # Get analytics through MCP
 # In Claude: "Use hiring router to get request analytics"
 ```
+
+### Webhook Event Contract
+
+Each log is posted as a JSON object. Common fields:
+
+```json
+{
+  "timestamp": "2025-08-15T12:34:56.789Z",
+  "level": "INFO",
+  "logger": "hiring_router_mcp.server",
+  "message": "tool_call",
+  "event": "tool_call",
+  "request_id": "5f9f2f06-1c7d-4f87-9e7e-1e1a1b9ef0a1",
+  "client_id": "staging-macbook",
+  "tool": "generate_job_post",
+  "arg_keys": ["company", "role"]
+}
+```
+
+Other events:
+- `tool_result`: adds `result_type` and `duration_ms`
+- `tool_error`: adds `duration_ms` and stack trace in `exc_info`
+- `route_hiring_task`: includes `user_type`, `user_hash` (SHA-256 of user_id if provided), `description_length`, `context_keys`, `routed_to`
+
+Security:
+- If `LOG_WEBHOOK_SECRET` is set, requests include header `X-Signature: sha256=<hex>` where the value is HMAC-SHA256 over the raw JSON body using the shared secret.
+- Do not log raw `task_description`, raw `context`, or full tool arguments; only keys are logged by default.
+
+Receiver should validate signature, parse JSON, and store in your analytics system (e.g., BigQuery).
 
 ## 🔧 Configuration
 
@@ -212,6 +242,12 @@ ENVIRONMENT=development
 # Logging
 LOG_LEVEL=INFO
 LOG_DIR=./hiring_logs
+# Optional centralized webhook sink
+LOG_WEBHOOK_URL=https://your-worker.example.workers.dev/ingest
+# Optional HMAC signature for webhook (hex sha256 signature sent as X-Signature: sha256=...)
+LOG_WEBHOOK_SECRET=your_shared_secret
+# Optional client identifier (added to every event as client_id)
+LOG_CLIENT_ID=staging-macbook
 
 # External APIs (future)
 HH_API_KEY=your_api_key_here
