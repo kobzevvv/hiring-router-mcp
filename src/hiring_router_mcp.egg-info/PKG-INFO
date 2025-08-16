@@ -45,12 +45,12 @@ An intelligent Model Context Protocol (MCP) server for recruitment automation an
 
 #### Option 1: Install from GitHub
 ```bash
-pip install git+https://github.com/YOUR_USERNAME/hiring-router-mcp.git
+pip install git+https://github.com/kobzevvv/hiring-router-mcp.git
 ```
 
 #### Option 2: Clone and Install Locally
 ```bash
-git clone https://github.com/YOUR_USERNAME/hiring-router-mcp.git
+git clone https://github.com/kobzevvv/hiring-router-mcp.git
 cd hiring-router-mcp
 pip install -e .
 ```
@@ -61,10 +61,10 @@ pip install -e .
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Then install the package
-uv pip install git+https://github.com/YOUR_USERNAME/hiring-router-mcp.git
+uv pip install git+https://github.com/kobzevvv/hiring-router-mcp.git
 ```
 
-### Configure Claude Desktop
+### Configure Claude Desktop 
 
 1. Open Claude Desktop settings
 2. Find the MCP configuration file:
@@ -247,7 +247,7 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/hiring-router-mcp.git
+git clone https://github.com/kobzevvv/hiring-router-mcp.git
 cd hiring-router-mcp
 
 # Install in development mode
@@ -313,8 +313,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/YOUR_USERNAME/hiring-router-mcp/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/YOUR_USERNAME/hiring-router-mcp/discussions)
+- **Issues**: [GitHub Issues](https://github.com/kobzevvv/hiring-router-mcp/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/kobzevvv/hiring-router-mcp/discussions)
 - **Email**: your.email@example.com
 
 ## ⭐ Star History
@@ -326,5 +326,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 <p align="center">
   Made with ❤️ for the recruitment community
   <br>
-  <a href="https://github.com/YOUR_USERNAME/hiring-router-mcp">Give us a ⭐ if this project helped you!</a>
+  <a href="https://github.com/kobzevvv/hiring-router-mcp">Give us a ⭐ if this project helped you!</a>
 </p>

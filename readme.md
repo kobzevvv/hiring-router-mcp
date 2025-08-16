@@ -29,12 +29,12 @@ An intelligent Model Context Protocol (MCP) server for recruitment automation an
 
 #### Option 1: Install from GitHub
 ```bash
-pip install git+https://github.com/YOUR_USERNAME/hiring-router-mcp.git
+pip install git+https://github.com/kobzevvv/hiring-router-mcp.git
 ```
 
 #### Option 2: Clone and Install Locally
 ```bash
-git clone https://github.com/YOUR_USERNAME/hiring-router-mcp.git
+git clone https://github.com/kobzevvv/hiring-router-mcp.git
 cd hiring-router-mcp
 pip install -e .
 ```
@@ -45,13 +45,13 @@ pip install -e .
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Then install the package
-uv pip install git+https://github.com/YOUR_USERNAME/hiring-router-mcp.git
+uv pip install git+https://github.com/kobzevvv/hiring-router-mcp.git
 ```
 
 ### Claude Desktop Integration (Step-by-step)
 
 1. Install the server (one time):
-   - `pip install git+https://github.com/YOUR_USERNAME/hiring-router-mcp.git`
+   - `pip install git+https://github.com/kobzevvv/hiring-router-mcp.git`
 
 2. Open Claude Desktop → Settings.
 
@@ -105,6 +105,49 @@ npx @modelcontextprotocol/inspector python -m hiring_router_mcp
 # Or run the server directly
 python -m hiring_router_mcp
 ```
+
+## 🌐 ChatGPT Deep Research (HTTP MCP)
+
+ChatGPT Deep Research connects to HTTP MCP servers that expose exactly two tools: `search` and `fetch`. This repo includes a minimal HTTP server at `hiring_router_mcp/deep_research.py` implementing both.
+
+### 1) Prepare records
+Create a JSON file containing an array of records. Each record must include `id`, `title`, `text`, and `metadata`:
+
+```json
+[
+  {"id": "1", "title": "Senior Python Engineer", "text": "Backend role focusing on APIs", "metadata": {"location": "Remote", "tags": ["python", "fastapi"]}},
+  {"id": "2", "title": "Recruiter Toolkit", "text": "Guidelines for better hiring funnels", "metadata": {"domain": "HR", "level": "guide"}}
+]
+```
+
+### 2) Run the HTTP MCP server
+
+```bash
+export DEEP_RESEARCH_RECORDS_PATH=/absolute/path/to/records.json
+export PORT=8000
+python -m hiring_router_mcp.deep_research
+```
+
+This starts the HTTP MCP at `http://0.0.0.0:8000/mcp/`.
+
+### 3) Expose to the internet (dev)
+
+```bash
+ngrok http 8000
+```
+
+Use the public URL from ngrok with the `/mcp/` path (e.g., `https://YOUR_ID.ngrok.io/mcp/`).
+
+### 4) Connect in ChatGPT
+
+- Settings → Connectors → Add custom connector
+- Name: Hiring Router Library
+- URL: your public server URL including `/mcp/`
+- Description: A hiring knowledge catalog with `search` and `fetch`
+
+Start a new chat → Tools → Run deep research → select your connector.
+
+If you see “This MCP server doesn’t implement our specification,” ensure both `search` and `fetch` exist and the URL ends with `/mcp/`.
 
 #### Troubleshooting
 
@@ -302,7 +345,7 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/hiring-router-mcp.git
+git clone https://github.com/kobzevvv/hiring-router-mcp.git
 cd hiring-router-mcp
 
 # Install in development mode
@@ -368,18 +411,18 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/YOUR_USERNAME/hiring-router-mcp/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/YOUR_USERNAME/hiring-router-mcp/discussions)
+- **Issues**: [GitHub Issues](https://github.com/kobzevvv/hiring-router-mcp/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/kobzevvv/hiring-router-mcp/discussions)
 - **Email**: your.email@example.com
 
 ## ⭐ Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=YOUR_USERNAME/hiring-router-mcp&type=Date)](https://star-history.com/#YOUR_USERNAME/hiring-router-mcp&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=kobzevvv/hiring-router-mcp&type=Date)](https://star-history.com/#kobzevvv/hiring-router-mcp&Date)
 
 ---
 
 <p align="center">
   Made with ❤️ for the recruitment community
   <br>
-  <a href="https://github.com/YOUR_USERNAME/hiring-router-mcp">Give us a ⭐ if this project helped you!</a>
+  <a href="https://github.com/kobzevvv/hiring-router-mcp">Give us a ⭐ if this project helped you!</a>
 </p>

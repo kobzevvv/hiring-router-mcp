@@ -1,0 +1,22 @@
+[
+  {
+    "id": "r1",
+    "title": "Senior Python Engineer role",
+    "text": "Hiring for a backend Python engineer experienced with APIs and data pipelines.",
+    "metadata": {"location": "Remote", "tags": ["python", "backend", "api"]}
+  },
+  {
+    "id": "r2",
+    "title": "Recruiter Toolkit: Improving hiring funnels",
+    "text": "Best practices for sourcing, screening, and funnel analytics.",
+    "metadata": {"domain": "HR", "level": "guide", "keywords": ["sourcing", "analytics"]}
+  },
+  {
+    "id": "r3",
+    "title": "Interview Prep for Python Developers",
+    "text": "Common algorithms, system design topics, and behavioral questions.",
+    "metadata": {"topic": "interview", "language": "Python"}
+  }
+]
+
+
