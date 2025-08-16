@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  librechat:
+    image: ghcr.io/danny-avila/librechat:latest
+    container_name: librechat
+    ports:
+      - "3080:3080"
+    env_file:
+      - .env
+    volumes:
+      - ./librechat.yaml:/app/librechat.yaml:ro
+    restart: unless-stopped
+

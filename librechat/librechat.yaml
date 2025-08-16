@@ -1,0 +1,13 @@
+mcpServers:
+  hiring-router-mcp:
+    label: "Hiring Router"
+    type: sse
+    url: "https://REPLACE_WITH_CLOUD_RUN_URL/mcp"
+    # LibreChat supports per-user variables; prompt users for Hireflix token.
+    headers:
+      Authorization: "Bearer {{HIREFLIX_TOKEN}}"
+    customUserVars:
+      HIREFLIX_TOKEN:
+        title: "Hireflix Token"
+        description: "Enter your personal Hireflix API token."
+

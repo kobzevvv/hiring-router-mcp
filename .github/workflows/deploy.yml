@@ -1,0 +1,47 @@
+name: Deploy to Cloud Run (WIF)
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    permissions:
+      contents: read
+      id-token: write
+    runs-on: ubuntu-latest
+    env:
+      GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+      CLOUD_RUN_REGION: ${{ vars.CLOUD_RUN_REGION }}
+      SERVICE_NAME: ${{ vars.SERVICE_NAME }}
+      AR_REPO: ${{ vars.AR_REPO }}
+      IMAGE: ${{ vars.CLOUD_RUN_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.AR_REPO }}/${{ vars.SERVICE_NAME }}:${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Auth via Workload Identity Federation
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.WIF_PROVIDER }}
+          service_account: ${{ vars.DEPLOY_SA_EMAIL }}
+
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure gcloud
+        run: |
+          gcloud config set project "$GCP_PROJECT_ID"
+          gcloud config set run/region "$CLOUD_RUN_REGION"
+
+      - name: Build & push image with Cloud Build
+        run: |
+          gcloud builds submit --tag "$IMAGE"
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy "$SERVICE_NAME" \
+            --image "$IMAGE" \
+            --allow-unauthenticated \
+            --min-instances=1 \
+            --timeout=3600
+

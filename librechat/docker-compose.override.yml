@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+  librechat:
+    environment:
+      - NODE_ENV=production
+      - PORT=3080
+    # Uncomment to persist user data (optional)
+    # volumes:
+    #   - ./data:/app/data
+

@@ -149,6 +149,30 @@ Start a new chat → Tools → Run deep research → select your connector.
 
 If you see “This MCP server doesn’t implement our specification,” ensure both `search` and `fetch` exist and the URL ends with `/mcp/`.
 
+### Container deployment (Fly.io example)
+
+1) Install the Fly CLI and login, then initialize:
+
+```bash
+fly launch --no-deploy
+```
+
+2) Build and deploy:
+
+```bash
+fly deploy
+```
+
+3) Set environment variables (optional):
+
+```bash
+fly secrets set DEEP_RESEARCH_RECORDS_PATH=/app/records.json
+```
+
+4) Get your public URL from Fly and use it in ChatGPT with `/mcp/` appended.
+
+Other platforms (Render, Railway, Azure Container Apps, Google Cloud Run) work similarly: build the container, set `PORT`, and run `python -m hiring_router_mcp.deep_research`.
+
 #### Troubleshooting
 
 - If Claude does not call tools:
@@ -426,3 +450,36 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
   <br>
   <a href="https://github.com/kobzevvv/hiring-router-mcp">Give us a ⭐ if this project helped you!</a>
 </p>
+
+## ☁️ Google Cloud Run (HTTP/SSE FastMCP)
+
+This repo includes an HTTP/SSE ASGI app exposing `/health`, `GET /mcp/sse`, and `POST /mcp/message` backed by the same tools. Build and deploy with Artifact Registry in `europe-west1`:
+
+```bash
+PROJECT_ID=qaleran
+REGION=europe-west1
+SERVICE=hiring-router-mcp
+REPO=hiring-router
+
+gcloud config set project $PROJECT_ID
+gcloud config set run/region $REGION
+gcloud services enable run.googleapis.com cloudbuild.googleapis.com artifactregistry.googleapis.com
+
+gcloud artifacts repositories create $REPO \
+  --repository-format=docker \
+  --location=$REGION || true
+
+gcloud builds submit \
+  --tag ${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO}/${SERVICE}
+
+gcloud run deploy ${SERVICE} \
+  --image ${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPO}/${SERVICE} \
+  --allow-unauthenticated \
+  --min-instances=1 \
+  --timeout=3600
+```
+
+Once deployed, your public MCP endpoints:
+- Health: `GET https://<service>-<hash>-<region>.a.run.app/health`
+- SSE: `GET https://<service>-<hash>-<region>.a.run.app/mcp/sse`
+- Messages: `POST https://<service>-<hash>-<region>.a.run.app/mcp/message`
