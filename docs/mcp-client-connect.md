@@ -22,16 +22,23 @@ Cloud example base URL (Google Cloud Run):
 https://<service>-<hash>-<region>.a.run.app
 ```
 
-Full URLs:
+Full URLs (session-bound):
 ```
-SSE:     https://<base>/mcp/sse
-Message: https://<base>/mcp/message
+SSE:     https://<base>/mcp/sse?session_id=<id>
+Message: https://<base>/mcp/message/?session_id=<id>
 Health:  https://<base>/health
 ```
+Notes:
+- Open the SSE stream first, using any stable `session_id` (e.g., a UUID). Reuse the same `session_id` on the message endpoint.
+- Include a trailing slash on `/mcp/message/` or allow redirects (HTTP 307 → `/mcp/message/`).
 
-Test with curl (Message):
+Test with curl (SSE + Message):
 ```bash
-curl -sS -X POST "https://<base>/mcp/message" -H 'Content-Type: application/json' \
+# 1) Start SSE (keep running)
+curl -N -sS "https://<base>/mcp/sse?session_id=dev-1"
+
+# 2) In another terminal, send a message bound to the same session
+curl -sS -L -X POST "https://<base>/mcp/message/?session_id=dev-1" -H 'Content-Type: application/json' \
   -d '{"jsonrpc":"2.0","id":"1","method":"tools/list","params":{}}' | jq .
 ```
 
@@ -69,8 +76,8 @@ If Open Chat UI supports adding a custom MCP HTTP connector, configure it with t
 ```json
 {
   "name": "hiring-router",
-  "sseUrl": "https://<base>/mcp/sse",
-  "messageUrl": "https://<base>/mcp/message",
+  "sseUrl": "https://<base>/mcp/sse?session_id=<id>",
+  "messageUrl": "https://<base>/mcp/message/?session_id=<id>",
   "healthUrl": "https://<base>/health"
 }
 ```
@@ -82,9 +89,11 @@ Client behavior:
 
 Browser example:
 ```js
+const sessionId = crypto.randomUUID();
+const base = "https://<base>";
 const config = {
-  sseUrl: "https://<base>/mcp/sse",
-  messageUrl: "https://<base>/mcp/message"
+  sseUrl: `${base}/mcp/sse?session_id=${encodeURIComponent(sessionId)}`,
+  messageUrl: `${base}/mcp/message/?session_id=${encodeURIComponent(sessionId)}`
 };
 
 const events = new EventSource(config.sseUrl);
@@ -128,7 +137,7 @@ MCP_HIRING_ROUTER_MESSAGE_URL=https://<base>/mcp/message
 MCP_HIRING_ROUTER_HEALTH_URL=https://<base>/health
 ```
 
-Then reference these variables in the app’s connector settings if supported. If MCP is not supported natively, implement a small server-side bridge following the JavaScript example above and expose it to the UI.
+Then reference these variables in the app’s connector settings if supported. If the client does not automatically negotiate sessions, append `?session_id=<id>` to both SSE and Message URLs and ensure the same value is used for both. If you receive an HTTP 307 on the Message endpoint, include the trailing slash (`/mcp/message/`) or allow redirects.
 
 ---
 
@@ -182,8 +191,8 @@ Use the public URL ending with `/mcp/` in ChatGPT’s custom connector UI.
 
 Any platform that serves an ASGI app works. Google Cloud Run example (public service):
 
-- SSE: `GET https://<service>-<hash>-<region>.a.run.app/mcp/sse`
-- Message: `POST https://<service>-<hash>-<region>.a.run.app/mcp/message`
+- SSE: `GET https://<service>-<hash>-<region>.a.run.app/mcp/sse?session_id=<id>`
+- Message: `POST https://<service>-<hash>-<region>.a.run.app/mcp/message/?session_id=<id>`
 - Health: `GET https://<service>-<hash>-<region>.a.run.app/health`
 
 If you place the service behind an API gateway:
@@ -237,6 +246,8 @@ N8N_WEBHOOK_URL=https://your-n8n-instance.com/webhook
 - If the UI shows no events, ensure SSE is reachable from the browser (CORS/proxy)
 - If using Claude Desktop, ensure the configured `python` is on PATH and restart the app
 - Use MCP Inspector to confirm the server runs without errors
+ - HTTP 307 on `/mcp/message`: include trailing slash or follow redirects
+ - `session_id is required` / `Invalid session ID`: open SSE first and reuse the same `session_id` on the message endpoint
 
 ---
 
