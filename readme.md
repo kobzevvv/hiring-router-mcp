@@ -385,6 +385,8 @@ Edit `src/hiring_router_mcp/config.py` to customize settings.
 - [Usage Guide](docs/usage.md) - Examples and best practices
 - [API Reference](docs/api.md) - Complete tool documentation
 - [Contributing](CONTRIBUTING.md) - How to contribute
+- [MCP Client Connect Guide](docs/mcp-client-connect.md) - How to connect various MCP clients (Open Chat UI, LibreChat, Claude, generic HTTP/SSE)
+- [MCP Client Connect Guide](docs/mcp-client-connect.md) - How to connect various MCP clients (Open Chat UI, LibreChat, Claude, generic HTTP/SSE)
 
 ## 🤝 Contributing
 
@@ -508,3 +510,36 @@ Once deployed, your public MCP endpoints:
 - Health: `GET https://<service>-<hash>-<region>.a.run.app/health`
 - SSE: `GET https://<service>-<hash>-<region>.a.run.app/mcp/sse`
 - Messages: `POST https://<service>-<hash>-<region>.a.run.app/mcp/message`
+
+### Calling over HTTP/SSE on Cloud Run
+
+This server uses SSE sessions for streaming responses. To call tools directly over HTTP:
+
+1) Start an SSE stream with a session id (keep this running):
+
+```bash
+curl -N -sS "https://<service>-<hash>-<region>.a.run.app/mcp/sse?session_id=dev-1"
+```
+
+2) In a separate terminal, send JSON-RPC messages bound to the same session id:
+
+```bash
+curl -sS -L -X POST "https://<service>-<hash>-<region>.a.run.app/mcp/message/?session_id=dev-1" \
+  -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":"1","method":"tools/list","params":{}}'
+```
+
+Notes:
+- Include the trailing slash on `/mcp/message/` or use `-L` to follow a 307 redirect.
+- If you see `session_id is required` or `Invalid session ID`, ensure the SSE stream is opened first with the same `session_id`.
+
+### Troubleshooting (Cloud Run)
+
+- Container failed to start / wrong port:
+  - Cloud Run injects the `PORT` environment variable. Ensure your app binds to `$PORT`. This repo’s server reads `PORT` and defaults to 8080 if missing.
+  - Avoid hardcoding a port; if you specify `--port` in deploy, match what the app listens on.
+  - Verify in logs that the server is running on the expected port.
+- HTTP 307 redirect on `/mcp/message`:
+  - Use the trailing slash (`/mcp/message/`) or pass `-L` to curl.
+- Session errors for JSON-RPC calls:
+  - Open the SSE connection first and reuse the same `session_id` in the message URL.
