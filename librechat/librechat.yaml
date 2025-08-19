@@ -1,7 +1,0 @@
-__mcpServers:
-  hiring-router-mcp:
-    label: "Hiring Router"
-    type: sse
-    url: "https://hiring-router-mcp-680223933889.europe-west1.run.app/mcp"
-    # Open MCP endpoint (no per-user auth headers). Add headers here later if needed.
-

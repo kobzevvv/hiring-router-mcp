@@ -48,6 +48,31 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 uv pip install git+https://github.com/kobzevvv/hiring-router-mcp.git
 ```
 
+## ✅ Client-agnostic MCP endpoints
+
+This server is client-agnostic. Any MCP-compatible client can connect over HTTP/SSE.
+
+- Endpoints (local or deployed):
+  - `GET /health` — health probe
+  - `GET /mcp/sse` — Server-Sent Events stream
+  - `POST /mcp/message` — JSON-RPC 2.0 messages
+
+Minimal JSON-RPC examples (for `POST /mcp/message`):
+
+```bash
+curl -sS -X POST https://<service>-<hash>-<region>.a.run.app/mcp/message \
+  -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":"1","method":"tools/list","params":{}}'
+```
+
+```bash
+curl -sS -X POST https://<service>-<hash>-<region>.a.run.app/mcp/message \
+  -H 'Content-Type: application/json' \
+  -d '{"jsonrpc":"2.0","id":"2","method":"tools/call","params":{"name":"get_available_tools","arguments":{"user_type":"recruiter"}}}'
+```
+
+Note: Replace `<service>-<hash>-<region>.a.run.app` with your Cloud Run service URL. Localhost is only used for development and can be ignored in cloud‑only setups.
+
 ### Claude Desktop Integration (Step-by-step)
 
 1. Install the server (one time):
