@@ -13,8 +13,8 @@ from .server import build_server
 _server = build_server()
 
 # Configure SSE endpoints under /mcp with explicit paths to match expectations
-_server.settings.sse_path = "/sse"
-_server.settings.message_path = "/message"
+_server.settings.sse_path = "/mcp/sse"
+_server.settings.message_path = "/mcp/message"
 
 
 @_server.custom_route("/health", methods=["GET"])
@@ -22,10 +22,16 @@ async def health(_: Request) -> Response:
     return JSONResponse({"ok": True})
 
 
-# Expose the ASGI app. This mounts:
+# Simple root endpoint for environment health checks
+@_server.custom_route("/", methods=["GET"])
+async def root(_: Request) -> Response:
+    return JSONResponse({"service": "hiring-router-mcp", "status": "ok"})
+
+
+# Expose the ASGI app. This serves:
 # - GET  /mcp/sse       (SSE stream)
 # - POST /mcp/message   (client→server JSON-RPC over HTTP)
-app = _server.sse_app(mount_path="/mcp")
+app = _server.sse_app()
 
 
 if __name__ == "__main__":
