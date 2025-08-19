@@ -24,7 +24,8 @@ RUN pip install --upgrade pip && pip install -e .
 
 EXPOSE 8000
 
-# Run the HTTP/SSE FastMCP server mounted at /mcp
-CMD ["python", "-m", "hiring_router_mcp.server_http_sse"]
+# Run the HTTP/SSE FastMCP server mounted at /mcp via uvicorn
+# Using uvicorn CLI ensures binding to 0.0.0.0 and the Cloud Run-provided PORT
+CMD ["uvicorn", "hiring_router_mcp.server_http_sse:app", "--host", "0.0.0.0", "--port", "8000", "--log-level", "info"]
 
 
