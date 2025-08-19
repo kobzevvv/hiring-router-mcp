@@ -17,7 +17,7 @@ RUN apt-get update -y && apt-get install -y --no-install-recommends \
 # Copy project files
 COPY pyproject.toml ./
 COPY src ./src
-COPY records.sample.json /app/records.json
+
 
 # Install package
 RUN pip install --upgrade pip && pip install -e .

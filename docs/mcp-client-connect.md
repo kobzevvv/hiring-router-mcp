@@ -173,17 +173,7 @@ npx @modelcontextprotocol/inspector python -m hiring_router_mcp
 
 ---
 
-## ChatGPT Deep Research (HTTP MCP)
-
-This repository includes a minimal HTTP MCP at `hiring_router_mcp/deep_research.py` with `search` and `fetch` tools.
-
-```bash
-export DEEP_RESEARCH_RECORDS_PATH=/absolute/path/to/records.json
-export PORT=8000
-python -m hiring_router_mcp.deep_research
-```
-
-Use the public URL ending with `/mcp/` in ChatGPT’s custom connector UI.
+<!-- Deep Research MCP example removed: feature is out of scope for this project. -->
 
 ---
 

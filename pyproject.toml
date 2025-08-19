@@ -26,7 +26,6 @@ dev = [
 
 [project.scripts]
 hiring-router-mcp = "hiring_router_mcp.server:run"
-deep-research-mcp = "hiring_router_mcp.deep_research:run"
 http-sse-mcp = "hiring_router_mcp.server_http_sse:app"
 
 [tool.setuptools]

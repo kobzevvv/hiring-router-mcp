@@ -1,0 +1,10 @@
+.venv/
+.git/
+**/__pycache__/
+*.pyc
+.DS_Store
+.pytest_cache/
+.mypy_cache/
+hiring_logs/
+memory-bank/
+

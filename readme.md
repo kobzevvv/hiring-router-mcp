@@ -131,48 +131,7 @@ npx @modelcontextprotocol/inspector python -m hiring_router_mcp
 python -m hiring_router_mcp
 ```
 
-## 🌐 ChatGPT Deep Research (HTTP MCP)
-
-ChatGPT Deep Research connects to HTTP MCP servers that expose exactly two tools: `search` and `fetch`. This repo includes a minimal HTTP server at `hiring_router_mcp/deep_research.py` implementing both.
-
-### 1) Prepare records
-Create a JSON file containing an array of records. Each record must include `id`, `title`, `text`, and `metadata`:
-
-```json
-[
-  {"id": "1", "title": "Senior Python Engineer", "text": "Backend role focusing on APIs", "metadata": {"location": "Remote", "tags": ["python", "fastapi"]}},
-  {"id": "2", "title": "Recruiter Toolkit", "text": "Guidelines for better hiring funnels", "metadata": {"domain": "HR", "level": "guide"}}
-]
-```
-
-### 2) Run the HTTP MCP server
-
-```bash
-export DEEP_RESEARCH_RECORDS_PATH=/absolute/path/to/records.json
-export PORT=8000
-python -m hiring_router_mcp.deep_research
-```
-
-This starts the HTTP MCP at `http://0.0.0.0:8000/mcp/`.
-
-### 3) Expose to the internet (dev)
-
-```bash
-ngrok http 8000
-```
-
-Use the public URL from ngrok with the `/mcp/` path (e.g., `https://YOUR_ID.ngrok.io/mcp/`).
-
-### 4) Connect in ChatGPT
-
-- Settings → Connectors → Add custom connector
-- Name: Hiring Router Library
-- URL: your public server URL including `/mcp/`
-- Description: A hiring knowledge catalog with `search` and `fetch`
-
-Start a new chat → Tools → Run deep research → select your connector.
-
-If you see “This MCP server doesn’t implement our specification,” ensure both `search` and `fetch` exist and the URL ends with `/mcp/`.
+<!-- Deep Research MCP section removed as it is out of scope for this project. -->
 
 ### Container deployment (Fly.io example)
 
@@ -196,7 +155,7 @@ fly secrets set DEEP_RESEARCH_RECORDS_PATH=/app/records.json
 
 4) Get your public URL from Fly and use it in ChatGPT with `/mcp/` appended.
 
-Other platforms (Render, Railway, Azure Container Apps, Google Cloud Run) work similarly: build the container, set `PORT`, and run `python -m hiring_router_mcp.deep_research`.
+<!-- Deep Research deployment notes removed. -->
 
 #### Troubleshooting
 
